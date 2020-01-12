@@ -16,7 +16,7 @@ to implement the Raft concensus algorithm.
 Start the server:
 
 ```bash
-$ python -m dictd.server localhost 8080
+$ go run ./server
 ```
 
 Easiest way to send client command:
@@ -28,7 +28,7 @@ $ echo -ne "+foo\r\nbar\r\n" | nc localhost 8080
 Start the client:
 
 ```bash
-$ python -m dictd.client localhost 8080
+$ go run ./client -p 8080
 ```
 
 ## License
