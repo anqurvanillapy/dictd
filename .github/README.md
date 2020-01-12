@@ -6,7 +6,7 @@ Dict, distributed.  A distributed KV database written in Python, for learning
 to implement the Raft concensus algorithm.
 
 - Commands/protocols:
-    + Sey key-value pair: `set KEY VAL`/`'+KEY\r\nVAL\r\n'`
+    + Set key-value pair: `set KEY VAL`/`'+KEY\r\nVAL\r\n'`
     + Get value by key: `get KEY`/`'=KEY\r\n'`
     + Delete value by key: `del KEY`/`'-KEY\r\n'`
     + Dump database: `all`/`'*\r\n'`

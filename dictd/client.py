@@ -6,7 +6,7 @@ __all__ = ("dial",)
 _HELP = """
 Commands:
 
-    set KEY VALUE       Sey key-value pair
+    set KEY VALUE       Set key-value pair
     get KEY             Get value by key
     del KEY             Delete value by key
     all                 Dump database

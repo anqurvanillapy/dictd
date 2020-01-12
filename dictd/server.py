@@ -42,12 +42,12 @@ async def _handle_conn(reader, writer):
     writer.close()
 
 
-def serve(host, port):
+def serve(port):
     loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(_handle_conn, host, port, loop=loop)
+    coro = asyncio.start_server(_handle_conn, '0.0.0.0', port, loop=loop)
     server = loop.run_until_complete(coro)
 
-    L.info(f"Listening to {host}:{port} ...")
+    L.info(f"Listening to {server.sockets[0].getsockname()} ...")
     try:
         loop.run_forever()
     except KeyboardInterrupt:
@@ -62,6 +62,6 @@ if __name__ == "__main__":
     import sys
 
     _, *args = sys.argv
-    if len(args) != 2:
-        sys.exit("Usage: dictd.server HOST PORT")
+    if len(args) != 1:
+        sys.exit("Usage: dictd.server PORT")
     serve(*args)
