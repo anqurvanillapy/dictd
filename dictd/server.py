@@ -51,3 +51,13 @@ def run(host, port):
     server.close()
     loop.run_until_complete(server.wait_closed())
     loop.close()
+
+
+if __name__ == "__main__":
+    import sys
+
+    _, *args = sys.argv
+    if len(args) != 2:
+        sys.exit("Usage: dictd HOST PORT")
+    host, port = args
+    run(host, port)
