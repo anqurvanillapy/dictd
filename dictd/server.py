@@ -1,43 +1,48 @@
-"""DB server"""
-
 import asyncio
 import logging as L
 
-L.basicConfig(format="[%(levelname)s] %(asctime)s %(message)s", level=L.INFO)
-
 from . import db
 
-__all__ = ("run",)
+__all__ = ("serve",)
+
+L.basicConfig(format="[%(levelname)s] %(asctime)s %(message)s", level=L.INFO)
 
 
 async def _handle_conn(reader, writer):
-    data = await reader.read(100)
-    msg = data.decode()
-
-    resp = None
-
     addr = writer.get_extra_info("peername")
-    cmd = db.parse_msg(msg)
 
-    if cmd is None:
-        L.warning(f"{addr}: Invalid command {data}")
-        resp = "bad"
-    else:
-        L.info(f"{addr}: Command '{cmd}'")
-        resp = cmd.execute()
+    while True:
+        data = await reader.read(100)
+        if not data:
+            writer.close()
+            L.info(f"{addr}: Closing ...")
+            break
 
-    if isinstance(cmd, db.All):
-        L.info(f"{addr}: Dumping database ...")
-    else:
-        L.info(f"{addr}: Sending '{resp}' ...")
+        msg = data.decode()
 
-    writer.write(resp.encode())
-    await writer.drain()
+        resp = None
+
+        cmd = db.parse_msg(msg)
+
+        if cmd is None:
+            L.warning(f"{addr}: Invalid command {data}")
+            resp = "bad"
+        else:
+            L.info(f"{addr}: Command '{cmd}'")
+            resp = cmd.execute()
+
+        if isinstance(cmd, db.All):
+            L.info(f"{addr}: Dumping database ...")
+        else:
+            L.info(f"{addr}: Sending '{repr(resp)}' ...")
+
+        writer.write(resp.encode())
+        await writer.drain()
 
     writer.close()
 
 
-def run(host, port):
+def serve(host, port):
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(_handle_conn, host, port, loop=loop)
     server = loop.run_until_complete(coro)
@@ -58,6 +63,5 @@ if __name__ == "__main__":
 
     _, *args = sys.argv
     if len(args) != 2:
-        sys.exit("Usage: dictd HOST PORT")
-    host, port = args
-    run(host, port)
+        sys.exit("Usage: dictd.server HOST PORT")
+    serve(*args)
