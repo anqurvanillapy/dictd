@@ -3,7 +3,7 @@
 import asyncio
 import logging as L
 
-L.getLogger().setLevel(L.INFO)
+L.basicConfig(format="[%(levelname)s] %(asctime)s %(message)s", level=L.INFO)
 
 from . import db
 

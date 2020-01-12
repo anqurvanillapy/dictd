@@ -5,28 +5,8 @@ __all__ = ("parse_msg", "Set", "Get", "Del", "All", "Clr", "Siz")
 _DB = {}
 
 
-def _set(key, val):
-    _DB[key] = val
-    return repr(key)
-
-
-def _get(key):
-    try:
-        return repr(_DB[key])
-    except KeyError:
-        return "bad"
-
-
-def _del(key):
-    try:
-        del _DB[key]
-        return "ok"
-    except KeyError:
-        return "bad"
-
-
 def parse_msg(msg):
-    msg = msg.strip()
+    msg = msg.rstrip()
     if len(msg) == 0:
         return None
 
@@ -67,7 +47,8 @@ class Set:
         return f"Set(key={repr(self.key)}, val={repr(self.val)})"
 
     def execute(self):
-        return _set(self.key, self.val)
+        _DB[self.key] = self.val
+        return repr(self.key)
 
 
 class Get:
@@ -78,7 +59,10 @@ class Get:
         return f"Get(key={repr(self.key)})"
 
     def execute(self):
-        return _get(self.key)
+        try:
+            return repr(_DB[self.key])
+        except KeyError:
+            return "bad"
 
 
 class Del:
@@ -89,7 +73,11 @@ class Del:
         return f"Del(key={repr(self.key)})"
 
     def execute(self):
-        return _del(self.key)
+        try:
+            del _DB[self.key]
+            return "ok"
+        except KeyError:
+            return "bad"
 
 
 class All:
