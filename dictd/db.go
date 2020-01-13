@@ -23,9 +23,6 @@ var cmdInfo = map[byte]int{
 	'+': 2,
 	'=': 1,
 	'-': 1,
-	'*': 0,
-	'!': 0,
-	'?': 0,
 }
 
 // Cmd is the database command
