@@ -16,8 +16,8 @@ implement the Raft concensus algorithm.
 Start the server:
 
 ```bash
-$ go run ./server
-# or go run ./server -p 8080 -c ./conf/dictd-cluster.json
+$ go run ./cmd/server
+# or go run ./cmd/server -p 8080 -c ./conf/dictd-cluster.json
 ```
 
 Easiest way to send client command:
@@ -30,7 +30,7 @@ ok
 Start the client:
 
 ```bash
-$ go run ./client -p 8080
+$ go run ./cmd/client -p 8080
 dictd>
 ```
 
