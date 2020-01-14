@@ -32,25 +32,28 @@ func Serve(port int, conf ClusterConf) error {
 }
 
 func handleRequest(conn net.Conn) {
-	buf := make([]byte, 1024)
+	defer conn.Close()
+	for {
+		buf := make([]byte, 1024)
 
-	_, err := conn.Read(buf)
-	if err != nil {
-		log.Println(err)
+		_, err := conn.Read(buf)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		var res dictd.Response
+		msg := bytes.TrimRight(buf, "\x00\t\r\n ")
+		cmd := dictd.ParseMsg(string(msg))
+
+		if cmd == nil {
+			res = dictd.StatusFail
+			log.Printf("Invalid request %q\n", msg)
+		} else {
+			res = cmd.Execute()
+			log.Printf("Request: %q, Response: %q\n", cmd, res)
+		}
+
+		conn.Write([]byte(res + "\r\n"))
 	}
-
-	var res dictd.Response
-	msg := bytes.TrimRight(buf, "\x00\t\r\n ")
-	cmd := dictd.ParseMsg(string(msg))
-
-	if cmd == nil {
-		res = dictd.StatusFail
-		log.Printf("Invalid request %q\n", msg)
-	} else {
-		res = cmd.Execute()
-		log.Printf("Request: %q, Response: %q\n", cmd, res)
-	}
-
-	conn.Write([]byte(res))
-	conn.Close()
 }
